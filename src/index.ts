@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //Rotas
 app.get("/", (request: Request, response: Response) => {
-  return response.send("Pagina Principal");
+  return response.send("Página esta funcionando!");
 });
 
 //POST Criar login - SignIn
@@ -48,7 +48,7 @@ app.post("/login",
   //console.log('log',user);
   if (!user) {
     return response.status(404).json({
-      msg: "Usuário e Senha estão errados",
+      msg: "Usuário e Senha incorretos!",
     });
   }
 
@@ -84,7 +84,7 @@ app.post("/message",
 
   listArray.push(list);
   //console.log(user);
-  return response.status(200).json({msg:"Cadastrado da Message com sucesso"});
+  return response.status(200).json({msg:"Mensagem cadastrada com sucesso!"});
 });
 
 // Atualizar um registro específico -- Insominia PUT
@@ -103,7 +103,7 @@ app.put("/message/:item", (request: Request, response: Response) => {
 
   if (!list) {
     return response.status(404).json({
-      msg: "Message não encontrado",
+      msg: "Mensagem não encontrada",
     });
   }
 
