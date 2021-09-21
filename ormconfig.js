@@ -1,45 +1,30 @@
-require("dotenv").config();
+require('dotenv').config();
 
-let config = {};
+const rootPath = process.env.NODE_ENV?.toLocaleLowerCase() === "production" ? 'dist' : 'src'
 
-//process.env.NODE_ENV = null;
-
-var entities = ["dist/core/infra/data/database/entities/**/*"];
-var migrations = ["dist/core/infra/data/database/migrations/**/*"];
-
-if (process.env.NODE_ENV.toString() === "dev") {
-  entities = ["src/core/infra/data/database/entities/**/*"];
-  migrations = ["src/core/infra/data/database/migrations/**/*"];
-}
-
-if (process.env.NODE_ENV.toString() === "test") {
-  config = {
-    name: "default",
-    type: "sqlite",
-    database: "./testdb.db",
-    entities: ["src/core/infra/data/database/entities/**/*"],
-    migrations: ["src/core/infra/data/database/migrations/**/*"],
-  };
-} else {
-  config = {
-    type: "postgres",
-    url: process.env.DATABASE_URL,
+module.exports = {
+    type: 'postgres',
+    //url: process.env.DATABASE_URL,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DATABASE,
     synchronize: false,
     logging: false,
-    schema: "lista1",
     extra: {
-      ssl: {
-        rejectUnauthorized: false,
-      },
+        ssl: {
+        rejectUnauthorized: false
+        }
     },
+    entities: [
+        `${rootPath}/core/infra/data/database/entities/**/*`
+    ],
+    migrations: [
+        `${rootPath}/core/infra/data/database/migrations/**/*`
+    ],
     cli: {
-      entitiesDir: "src/core/infra/data/database/entities/**/*",
-      migrationsDir: "src/core/infra/data/database/migrations/**/*",
-    },
-    // Order , second
-    entities: entities,
-    migrations: migrations,
-  };
+        entitiesDir: `${rootPath}/core/infra/data/database/entities`,
+        migrationsDir: `${rootPath}/core/infra/data/database/migrations`
+    }
 }
-
-module.exports = config;

@@ -1,7 +1,6 @@
-import cors from "cors";
 import express, { Request, Response, Router } from "express";
-import TodoListRoutes from "../../features/todolist/presentation/routes";
-import UserRoutes from "../../features/user/presentation/routes";
+import MessagesRoutes from "../../features/messages/presentation/routes/routes";
+import UserRoutes from "../../features/user/presentation/routes/routes";
 
 export default class App {
   readonly #express: express.Application;
@@ -20,7 +19,6 @@ export default class App {
   }
 
   private middlewares(): void {
-    this.#express.use(cors());
     this.#express.use(express.json());
     this.#express.use(express.urlencoded({ extended: false }));
   }
@@ -33,11 +31,10 @@ export default class App {
 
     router.get("/", (_: Request, res: Response) => res.send("API RUNNING..."));
 
-    const todoListRoutes = new TodoListRoutes().init(router);
-    this.#express.use(todoListRoutes);
+    const messagesRoutes = new MessagesRoutes().init();
+    const userRoutes = new UserRoutes().init();
 
-    const userRoutes = new UserRoutes().init(router);
-    this.#express.use(userRoutes);
+    this.#express.use(messagesRoutes, userRoutes);
   }
 
   public start(port: number): void {

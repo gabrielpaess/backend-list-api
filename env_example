@@ -1,0 +1,8 @@
+DB_HOST=
+DATABASE=d
+DB_USERNAME=
+DB_PASSWORD=
+DB_PORT=
+PORT=
+DB_PATH=src/core/infra/data/database
+REDIS_URL=localhost

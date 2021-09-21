@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { CacheRepository } from "../../../../core/infra/repositories/cache.repository";
+import { Request, response, Response } from 'express';
+import { CacheRepository } from '../../../../core/infra/repositories/cache.repository';
 import {
   DataNotFoundError,
   HttpRequest,
@@ -8,89 +8,46 @@ import {
   notFound,
   ok,
   serverError,
-} from "../../../../core/presentation";
-import UserRepository from "../../infra/repositories/user.repository";
-//import { v4 } from "uuid";
+} from '../../../../core/presentation';
+import UsersEntity from '../../infra/repositories/user.repository';
 
-export default class UserController implements MvcController {
-  readonly #repository: UserRepository;
+export class UserController implements MvcController {
+  readonly #repository: UsersEntity;
   readonly #cache: CacheRepository;
 
-  constructor(repository: UserRepository, cache: CacheRepository) {
+  constructor(repository: UsersEntity, cache: CacheRepository) {
     this.#repository = repository;
     this.#cache = cache;
   }
 
   public async index() {
-    //return res.json("index");
     try {
-      const cache = await this.#cache.get("user:all");
-
+      // verifico se existe no cache
+      const cache = await this.#cache.get('users:all');
       // valido se existe cache
       if (cache) {
         return ok(
-          cache.map((user: any) =>
-            Object.assign({}, user, {
+          cache.map((message: any) =>
+            Object.assign({}, message, {
               cache: true,
-            })
-          )
+            }),
+          ),
         );
       }
 
-      const users = await this.#repository.getUsers();
+      const messages = await this.#repository.getUsers();
 
-      await this.#cache.set("user:all", users);
+      await this.#cache.set('users:all', messages);
 
-      return ok(users);
+      return ok(messages);
     } catch (error) {
       return serverError();
     }
   }
 
-  public async show(request: HttpRequest) {
-    const { user, password } = request.body;
+  async delete(request: HttpRequest): Promise<HttpResponse> {
+    const { uid } = request.params;
 
-    //console.log("params>>>", request.body);
-    try {
-      // consulto o cache
-      const cache = await this.#cache.get(`user:${user}`);
-      if (cache) {
-        return ok(Object.assign({}, cache, { cache: true }));
-        // or return ok({ ...cache, cache: true });
-      }
-      const result = await this.#repository.getUser(user, password);
-
-      if (!result) {
-        return notFound(new DataNotFoundError());
-      }
-
-      //salva no redis
-      await this.#cache.set(`user:${user}`, result);
-
-      // Expira em X segundos
-      //await this.#cache.setex(`user:${uid}`, user, 5);
-
-      return ok(result);
-    } catch (error) {
-      return serverError();
-    }
-  }
-
-  async store(request: HttpRequest): Promise<HttpResponse> {
-    try {
-      const result = await this.#repository.create(request.body);
-
-      await this.#cache.del("user:all");
-
-      return ok(result);
-    } catch (error) {
-      console.log(error);
-      return serverError();
-    }
-  }
-
-  async delete(req: HttpRequest): Promise<HttpResponse> {
-    const { uid } = req.params;
     try {
       const result = await this.#repository.delete(uid);
       return ok(result);
@@ -99,17 +56,100 @@ export default class UserController implements MvcController {
     }
   }
 
-  async update(req: HttpRequest): Promise<HttpResponse> {
-    const { uid } = req.params;
-    const { user } = req.body;
+  async store(request: HttpRequest): Promise<HttpResponse> {
+    const { id } = request.params;
     try {
-      const result = await this.#repository.update(uid, req.body);
+      const result = await this.#repository.create(request.body);
 
-      await this.#cache.del("user:all");
-      await this.#cache.del(`user:${user}`);
+      this.#cache.del('users:all');
 
       return ok(result);
     } catch (error) {
+      console.log(error);
+      return serverError();
+    }
+  }
+
+  public async show(request: HttpRequest): Promise<HttpResponse> {
+    const { id } = request.params;
+
+    try {
+      // consulto o cache
+      const cache = await this.#cache.get(`user:${id}`);
+      if (cache) {
+        return ok(Object.assign({}, cache, { cache: true }));
+      }
+
+      const message = await this.#repository.getUser(id);
+      if (!message) {
+        return notFound(new DataNotFoundError());
+      }
+
+      await this.#cache.setex(`user:${id}`, message, 20);
+
+      return ok(message);
+    } catch (error) {
+      return serverError();
+    }
+  }
+
+  public async getName(request: HttpRequest): Promise<HttpResponse> {
+    const { name } = request.params;
+
+    console.log(name);
+    try {
+      // consulto o cache
+      const cache = await this.#cache.get(`user-name:${name}`);
+      if (cache) {
+        return ok(Object.assign({}, cache, { cache: true }));
+      }
+
+      const user = await this.#repository.getUserName(name);
+      if (!user) {
+        return notFound(new DataNotFoundError());
+      }
+
+      await this.#cache.setex(`user-name:${name}`, user, 20);
+
+      return ok(user);
+    } catch (error) {
+      return serverError();
+    }
+  }
+
+  public async getAll(request: HttpRequest): Promise<HttpResponse> {
+    const { id } = request.params;
+
+    try {
+      // consulto o cache
+      const cache = await this.#cache.get(`user-message:${id}`);
+      if (cache) {
+        return ok(Object.assign({}, cache, { cache: true }));
+      }
+
+      const message = await this.#repository.getUserMessages(id);
+      if (!message) {
+        return notFound(new DataNotFoundError());
+      }
+
+      await this.#cache.setex(`user-message:${id}`, message, 20);
+
+      return ok(message);
+    } catch (error) {
+      return serverError();
+    }
+  }
+
+  async update(request: HttpRequest): Promise<HttpResponse> {
+    const { uid } = request.params;
+    console.log(request.body);
+
+    try {
+      const result = await this.#repository.update(uid, request.body);
+
+      return ok(result);
+    } catch (error) {
+      console.log(error);
       return serverError();
     }
   }

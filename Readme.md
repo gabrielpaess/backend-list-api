@@ -1,5 +1,17 @@
-### Back List Api
-- Feito em Node
+# 🚀 Projeto API Lista de Recados
 
-[Heroku link](https://backlistapi.herokuapp.com/)
+💻 O projeto foi criado utilizando as seguintes tecnologias: NodeJS, Typescript, Redis e DB Postgress
 
+Segue abaixo as principais tecnologias utilizadas neste projeto:
+
+- JavaScript ✅
+- Typescript ✅
+- TypeORM ✅
+- Redis ✅
+- Postgresql ✅
+
+Instalação de dependências e bibliotecas
+
+```
+yarn install
+```

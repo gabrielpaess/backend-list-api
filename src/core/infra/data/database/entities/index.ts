@@ -1,2 +1,2 @@
-export * from "./user.entity";
-export * from "./todoList.entity";
+export * from "./messages.entity";
+export * from "./users.entity";

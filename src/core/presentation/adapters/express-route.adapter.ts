@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { Controller, EMvc, HttpRequest, HttpResponse } from "..";
-import { MvcController } from "../contracts";
+import { Request, Response } from 'express';
+import { Controller, EMvc, HttpRequest, HttpResponse } from '..';
+import { MvcController } from '../contracts';
 
 export const routeAdapter = (controller: Controller) => {
   return async (req: Request, res: Response) => {
@@ -28,7 +28,10 @@ export const routerMvcAdapter = (controller: MvcController, type: EMvc) => {
       params: req.params,
     };
 
-    let httpResponse: HttpResponse;
+    let httpResponse: HttpResponse = {
+      statusCode: 0,
+      body: '',
+    };
 
     switch (type) {
       case EMvc.STORE:
@@ -42,6 +45,12 @@ export const routerMvcAdapter = (controller: MvcController, type: EMvc) => {
         break;
       case EMvc.UPDATE:
         httpResponse = await controller.update(httpRequest);
+        break;
+      case EMvc.GETNAME:
+        httpResponse = await controller.getName(httpRequest);
+        break;
+      case EMvc.GETALL:
+        httpResponse = await controller.getAll(httpRequest);
         break;
       case EMvc.DELETE:
         httpResponse = await controller.delete(httpRequest);
