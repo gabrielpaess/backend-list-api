@@ -1,8 +1,0 @@
-post http://localhost:8080/tasks
-content-type: application/json
-
-{
-    "name": "Tarefa teste 1",
-    "description": "Implementar CRUD de Tarefas",
-    "projectUid": "fa997ea2-6d71-4ad5-8d05-b08596613a63"
-}
