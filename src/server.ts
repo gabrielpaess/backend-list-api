@@ -7,6 +7,6 @@ Promise.all([new Database().openConnection(), new Redis().openConnection()])
   .then(() => {
     const app = new App();
     app.init();
-    app.start(3000);
+    app.start(8080);
   })
   .catch(console.error);
