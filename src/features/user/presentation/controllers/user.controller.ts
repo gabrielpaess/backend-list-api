@@ -52,6 +52,7 @@ export class UserController implements MvcController {
       const result = await this.#repository.delete(uid);
       return ok(result);
     } catch (error) {
+      console.log(error)
       return serverError();
     }
   }
@@ -89,6 +90,7 @@ export class UserController implements MvcController {
 
       return ok(message);
     } catch (error) {
+      console.log(error)
       return serverError();
     }
   }
@@ -113,6 +115,7 @@ export class UserController implements MvcController {
 
       return ok(user);
     } catch (error) {
+      console.log(error)
       return serverError();
     }
   }
@@ -136,6 +139,7 @@ export class UserController implements MvcController {
 
       return ok(message);
     } catch (error) {
+      console.log(error)
       return serverError();
     }
   }

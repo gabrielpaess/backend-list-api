@@ -12,8 +12,12 @@ export class Redis {
     return this.#connection;
   }
 
+  //https://dev.to/ramko9999/host-and-use-redis-for-free-51if
+  //https://docs.redislabs.com/latest/rs/references/client_references/client_ioredis/
+
   public async openConnection(): Promise<void> {
     if (!Redis.#connection) {
+      //teste para localhost
       Redis.#connection = new IORedis(process.env.REDIS_URL);
     }
   }

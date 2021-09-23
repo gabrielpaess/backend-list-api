@@ -1,2 +1,0 @@
-get http://localhost:8080/tasks
-content-type: application/json
